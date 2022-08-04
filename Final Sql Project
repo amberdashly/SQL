@@ -1,0 +1,99 @@
+
+
+-Q1:Show Customers (their full names, customer ID, and country) who are not in the US. (Hint: != or <> can be used to say "is not equal to").
+Select customers.FirstName, customers.LastName, customers.CustomerId, customers.Country From chinook.customers
+Where customers.Country NOT like "USA" ;
+--or
+Select customers.FirstName, customers.LastName, customers.CustomerId, customers.Country From chinook.customers
+Where customers.Country != "USA" ;
+
+--Q2: Show only the Customers from Brazil.
+Select customers.FirstName, customers.LastName, customers.CustomerId, customers.Country From chinook.customers
+Where customers.Country = "Brazil" ;
+
+--Q3: Find the Invoices of customers who are from Brazil. The resulting table should show the customer's full name, Invoice ID, Date of the invoice, and billing country.
+Select CUST.FirstName, CUST.LastName, INV.InvoiceId, INV.InvoiceDate, INV.BillingCountry From chinook.invoices as INV
+left join chinook.customers as CUST
+ON INV.InvoiceId = CUST.customerID
+Where INV.BillingCountry = "Brazil"; 
+--(if i would have just used join it would've only included the people with names... left join provides all the information for thoses that dont have a name)
+
+--Q4:Show the Employees who are Sales Agents.
+Select employees.FirstName, employees.LastName, employees.Title From chinook.employees
+Where employees.Title like "Sales%Agent";
+--or if  you want all of their info
+
+SELECT * FROM chinook.Employees
+WHERE employees.Title like "Sales%Agent" ;
+
+--Q5:Find a unique/distinct list of billing countries from the Invoice table.
+Select distinct invoices.BillingCountry From chinook.invoices;
+
+Select*From chinook.customers;
+
+--Q6:Provide a query that shows the invoices associated with each sales agent. The resulting table should include the Sales Agent's full name.
+Select emp.FirstName, emp.LastName, inv.InvoiceId
+From chinook.employees as emp
+Join chinook.customers as cust
+ON emp.EmployeeId = cust.SupportRepId  
+Join chinook.invoices as inv
+On cust.CustomerID  = inv.CustomerID ;
+
+--Q7: Show the Invoice Total, Customer name, Country, and Sales Agent name for all invoices and customers.
+Select inv.Total, cust.FirstName as Cust_F_Name, cust.LastName as Cust_L_Name, cust.Country, emp.FirstName as E_F_Name, emp.LastName as E_L_Name
+From chinook.employees as emp
+Join chinook.customers as cust
+ON emp.EmployeeId = cust.SupportRepId  
+Join chinook.invoices as inv
+On cust.CustomerID  = inv.CustomerID ;
+
+--Q8: How many Invoices were there in 2009?
+Select count(invoices.InvoiceId) From chinook.invoices
+Where invoices.InvoiceDate like "2009%" ;
+
+--Q9: What are the total sales for 2009?
+Select Sum(invoices.Total) From chinook.invoices
+Where invoices.InvoiceDate like "2009%" ;
+
+Select*From chinook.invoice_items;
+
+--Q10: Write a query that includes the purchased track name with each invoice line item
+Select Trax.Name, IcItm.InvoiceLineId From chinook.invoice_items as IcItm
+Join chinook.tracks as Trax
+On IcItm.TrackId = Trax.TrackId;
+
+
+--Q11: Write a query that includes the purchased track name AND artist name with each invoice line item.
+SELECT tracks.Name as "Track Name", tracks.Composer as "Artist name", invoice_items.InvoiceLineId
+FROM chinook.Invoice_items 
+JOIN chinook.Tracks 
+ON invoice_items.TrackId = tracks.TrackId;
+
+--Q12: Provide a query that shows all the Tracks, and include the Album name, Media type, and Genre.
+Select tracks.Name, albums.Title, media_types.Name, genres.Name From chinook.tracks
+join chinook.albums
+on tracks.AlbumId = albums.AlbumId
+join chinook.media_types
+on tracks.MediaTypeId = media_types.MediaTypeId
+join chinook.genres
+on tracks.GenreId = genres.GenreId;
+
+--Q13: Show the total sales made by each sales agent.
+Select employees.FirstName, employees.LastName, employees.Title , Sum(invoices.Total) as "Total Sales" From chinook.employees
+Join chinook.customers 
+ON employees.EmployeeId = customers.SupportRepId  
+Join chinook.invoices 
+On customers.CustomerID  = invoices.CustomerID 
+Where employees.Title like "Sales%Agent"
+Group by employees.FirstName;
+
+--Q14 Which sales agent made the most in sales in 2009?
+Select employees.FirstName, employees.LastName, employees.Title,Sum(invoices.Total) as "Total Sales" From chinook.employees
+Join chinook.customers 
+ON employees.EmployeeId = customers.SupportRepId  
+Join chinook.invoices 
+On customers.CustomerID  = invoices.CustomerID 
+Where invoices.InvoiceDate like "2009%"
+Group by employees.FirstName 
+Order by "Total Sales"Desc
+Limit 1;
