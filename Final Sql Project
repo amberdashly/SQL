@@ -97,3 +97,25 @@ Where invoices.InvoiceDate like "2009%"
 Group by employees.FirstName 
 Order by "Total Sales"Desc
 Limit 1;
+
+These are two questions I made up myself
+
+--Q15 Make a playlist of only Reggae music(include Song Title, Artust name and genre name).
+Select tracks.name as " Song Title", artists.Name as "Artist", genres.Name as "Genre" From chinook.tracks
+Join artists
+on artists.ArtistId = albums.ArtistId
+join chinook.albums
+on albums.AlbumId = tracks.AlbumId
+join genres
+on tracks.GenreId = genres.GenreId
+Where "Genre" = "Reggae";
+
+--Q16 List the customers who purchased Reggae music in 2009.(include customer full name,Album title, genre, year)
+Select customers.FirstName, customers.LastName, Albums.Title as "Album Name", genres.Name as "Genre",invoices.InvoiceDate From chinook.invoices
+left join chinook.customers 
+ON invoices.InvoiceId = customers.customerID
+left join albums
+On albums.AlbumId = customers.customerID
+left join genres
+On genres.GenreId = customers.customerID
+Where invoices.InvoiceDate like "2009%" and "Genre" = "Reggae";
